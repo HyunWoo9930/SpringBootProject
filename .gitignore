@@ -6,7 +6,7 @@ build/
 !**/src/test/**/build/
 
 ### properties ###
-**/application.yaml
+**/application.properties
 
 # macOS system files (맥)
 *.DS_Store
