@@ -9,6 +9,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ReservationRequest {
-	private Long bookId;
+public class ProfileRequest {
+	private String name;
+	private String bio;
+	private int generation;
+	private String major;
+	private String imageUrl;
+	private String githubLink;
 }

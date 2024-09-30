@@ -3,6 +3,7 @@ package com.likelion.lionlib.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.likelion.lionlib.dto.BookRequest;
 import com.likelion.lionlib.dto.BookResponse;
+import com.likelion.lionlib.dto.CustomUserDetails;
 import com.likelion.lionlib.dto.LoanRequest;
 import com.likelion.lionlib.dto.LoanResponse;
 import com.likelion.lionlib.service.BookService;
@@ -77,9 +79,11 @@ public class LibraryController {
 
 	// 도서 대출 등록
 	@PostMapping("/loans")
-	public ResponseEntity<LoanResponse> addLoan(@RequestBody LoanRequest loanRequest) {
+	public ResponseEntity<LoanResponse> addLoan(@AuthenticationPrincipal CustomUserDetails authentication,
+		@RequestBody LoanRequest loanRequest) {
 		log.info("Request POST a loan: {}", loanRequest);
-		LoanResponse savedLoan = loanService.addLoan(loanRequest);
+		log.info("Request POST a loan memberId: {}", authentication.getId());
+		LoanResponse savedLoan = loanService.addLoan(authentication, loanRequest);
 		log.info("Response POST a loan: {}", savedLoan);
 		return ResponseEntity.ok(savedLoan);
 	}
@@ -100,14 +104,5 @@ public class LibraryController {
 		LoanResponse updatedLoan = loanService.updateStatus(loanId, loanRequest);
 		log.info("Response PUT update loan status: {}", updatedLoan);
 		return ResponseEntity.ok(updatedLoan);
-	}
-
-	// 사용자의 대출 목록 조회
-	@GetMapping("/members/{memberId}/loans")
-	public ResponseEntity<List<LoanResponse>> getLoansByMemberId(@PathVariable Long memberId) {
-		log.info("Request GET loans for member with ID: {}", memberId);
-		List<LoanResponse> loans = loanService.getLoansByMemberId(memberId);
-		log.info("Response GET loans for member: {}", loans);
-		return ResponseEntity.ok(loans);
 	}
 }

@@ -14,7 +14,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class LoanRequest {
-	private Long memberId;
 	private Long bookId;
 	private LocalDate loanDate;
 	private LocalDate returnDate;

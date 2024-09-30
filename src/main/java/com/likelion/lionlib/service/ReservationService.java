@@ -8,6 +8,7 @@ import com.likelion.lionlib.domain.Book;
 import com.likelion.lionlib.domain.Member;
 import com.likelion.lionlib.domain.Reservation;
 import com.likelion.lionlib.dto.BookReservationResponse;
+import com.likelion.lionlib.dto.CustomUserDetails;
 import com.likelion.lionlib.dto.ReservationRequest;
 import com.likelion.lionlib.dto.ReservationResponse;
 import com.likelion.lionlib.repository.BookRepository;
@@ -27,8 +28,8 @@ public class ReservationService {
 		this.memberRepository = memberRepository;
 	}
 
-	public void reserve(ReservationRequest reservationRequest) {
-		reservationRepository.findByBookIdAndMemberId(reservationRequest.getBookId(), reservationRequest.getMemberId())
+	public void reserve(CustomUserDetails customUserDetails, ReservationRequest reservationRequest) {
+		reservationRepository.findByBookIdAndMemberId(reservationRequest.getBookId(), customUserDetails.getId())
 			.ifPresent(reservation -> {
 				throw new IllegalArgumentException("이미 예약한 책입니다.");
 			});
@@ -36,7 +37,7 @@ public class ReservationService {
 		Book book = bookRepository.findById(reservationRequest.getBookId())
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 책입니다."));
 
-		Member member = memberRepository.findById(reservationRequest.getMemberId())
+		Member member = memberRepository.findById(customUserDetails.getId())
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
 		if (book.getQuantity() == 0) {
@@ -51,7 +52,10 @@ public class ReservationService {
 		}
 	}
 
-	public void cancel(Long reservationId) {
+	public void cancel(CustomUserDetails customUserDetails, Long reservationId) {
+		reservationRepository.findByIdAndMemberId(customUserDetails.getId(), reservationId)
+			.orElseThrow(() -> new IllegalArgumentException("자신의 예약만 삭제 가능합니다!"));
+
 		Reservation reservation = reservationRepository.findById(reservationId)
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 예약입니다."));
 		Book book = reservation.getBook();
@@ -68,7 +72,7 @@ public class ReservationService {
 	}
 
 	public List<ReservationResponse> getMemberReservation(Long memberId) {
-		Member member = memberRepository.findById(memberId)
+		memberRepository.findById(memberId)
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
 		return reservationRepository.findAllByMemberId(memberId)

@@ -11,12 +11,10 @@ import lombok.Getter;
 @Builder
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ReservationResponse {
-	private Long memberId;
 	private Long bookId;
 
 	public static ReservationResponse fromEntity(Reservation reservation) {
 		return ReservationResponse.builder()
-			.memberId(reservation.getMember().getId())
 			.bookId(reservation.getBook().getId())
 			.build();
 	}

@@ -15,12 +15,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
 public class Profile extends BaseTime {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,4 +39,6 @@ public class Profile extends BaseTime {
 	private String major;
 	private String imageUrl;
 	private String githubLink;
+
+
 }
